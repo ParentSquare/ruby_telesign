@@ -4,7 +4,6 @@ require 'time'
 require 'base64'
 require 'openssl'
 require 'securerandom'
-require 'net/http/persistent'
 
 module Telesign
   SDK_VERSION = '2.2.2'
@@ -232,6 +231,8 @@ module Telesign
     # * +request_object + - instance of Net::HTTPRequest
     # and returns a Net::HTTPResponse
     def build_http(options = {})
+      require 'net/http/persistent' unless defined?(Net::HTTP::Persistent)
+
       http = Net::HTTP::Persistent.new(name: 'telesign', proxy: options[:proxy])
 
       timeout = options[:timeout]
