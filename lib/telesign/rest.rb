@@ -57,12 +57,19 @@ module Telesign
       @api_key = api_key
       @rest_endpoint = rest_endpoint
 
-      @http = Net::HTTP::Persistent.new(name: 'telesign', proxy: proxy)
+      @http = build_http(proxy: proxy, timeout: timeout)
+    end
 
+    def build_http(options = {})
+      http = Net::HTTP::Persistent.new(name: 'telesign', proxy: options[:proxy])
+
+      timeout = options[:timeout]
       unless timeout.nil?
-        @http.open_timeout = timeout
-        @http.read_timeout = timeout
+        http.open_timeout = timeout
+        http.read_timeout = timeout
       end
+
+      http
     end
 
     # Generates the TeleSign REST API headers used to authenticate requests.
