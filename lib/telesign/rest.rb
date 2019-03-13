@@ -60,18 +60,6 @@ module Telesign
       @http = build_http(proxy: proxy, timeout: timeout)
     end
 
-    def build_http(options = {})
-      http = Net::HTTP::Persistent.new(name: 'telesign', proxy: options[:proxy])
-
-      timeout = options[:timeout]
-      unless timeout.nil?
-        http.open_timeout = timeout
-        http.read_timeout = timeout
-      end
-
-      http
-    end
-
     # Generates the TeleSign REST API headers used to authenticate requests.
     #
     # Creates the canonicalized string_to_sign and generates the HMAC signature. This is used to authenticate requests
@@ -236,6 +224,23 @@ module Telesign
 
     def content_type
       "application/x-www-form-urlencoded"
+    end
+
+    # Build HTTP Client
+    # the client must response to a `request(uri, request_object)` that takes two arguments:
+    # * +uri+ - instance of URI
+    # * +request_object + - instance of Net::HTTPRequest
+    # and returns a Net::HTTPResponse
+    def build_http(options = {})
+      http = Net::HTTP::Persistent.new(name: 'telesign', proxy: options[:proxy])
+
+      timeout = options[:timeout]
+      unless timeout.nil?
+        http.open_timeout = timeout
+        http.read_timeout = timeout
+      end
+
+      http
     end
   end
 end
